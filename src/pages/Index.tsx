@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import StarField from '@/components/StarField';
@@ -9,6 +8,7 @@ import { generatePlanets, generateStarterPlanet, Planet } from '@/utils/planetGe
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Rocket, Compass, Globe } from 'lucide-react';
 import { toast } from 'sonner';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
   const [planets, setPlanets] = useState<Planet[]>([]);
@@ -16,7 +16,6 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'planet' | 'galaxy'>('planet');
   
-  // Generate planets on initial load
   useEffect(() => {
     const generateGalaxy = () => {
       const starter = generateStarterPlanet(); 
@@ -30,7 +29,6 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  // Handle planet selection
   const handleSelectPlanet = (planetId: string) => {
     const selected = planets.find(p => p.id === planetId);
     if (selected) {
@@ -40,7 +38,6 @@ const Index = () => {
     }
   };
   
-  // Generate a new random planet
   const handleGenerateNewPlanet = () => {
     const newPlanet = generateStarterPlanet();
     setPlanets([...planets, newPlanet]);
@@ -51,111 +48,104 @@ const Index = () => {
   
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Background effects */}
       <StarField starCount={150} />
-      
-      {/* Navigation */}
       <Navbar />
-      
-      {/* Main content */}
-      <main className="container mx-auto px-4 py-16">
-        <div className="flex flex-col gap-8">
-          {/* Header with title */}
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex flex-col gap-6">
           <div className="text-center pt-4 pb-6">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cosmic-teal via-cosmic-purple to-cosmic-pink glow-text">
-              COSMOS VOYAGER
-            </h1>
-            <p className="text-lg text-cosmic-teal/80 max-w-2xl mx-auto">
-              Explore the vastness of procedurally generated worlds in this No Man's Sky inspired universe
+            <h1 className="nms-title mb-4">COSMOS VOYAGER</h1>
+            <p className="text-cosmic-teal/80 nms-text">
+              ATLAS INTERFACE v1.0 // SYSTEM SCAN ACTIVE
             </p>
           </div>
-          
+
           {isLoading ? (
             <div className="flex justify-center items-center min-h-[500px]">
               <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cosmic-purple"></div>
-                <p className="text-cosmic-teal animate-pulse">Initializing universe...</p>
+                <div className="w-16 h-16 relative">
+                  <div className="absolute inset-0 border-4 border-cosmic-teal/30 rounded-full animate-spin"></div>
+                  <div className="absolute inset-2 border-t-4 border-cosmic-teal rounded-full animate-spin-slow"></div>
+                </div>
+                <p className="nms-text text-cosmic-teal animate-pulse">INITIALIZING ATLAS INTERFACE...</p>
               </div>
             </div>
           ) : (
             <>
-              {/* Tab navigation */}
-              <div className="flex justify-center mb-2">
-                <div className="glass rounded-lg p-1 flex space-x-1">
-                  <Button 
-                    variant={activeTab === 'planet' ? 'default' : 'ghost'}
-                    className={activeTab === 'planet' ? 'bg-cosmic-purple text-white' : 'text-muted-foreground'}
-                    onClick={() => setActiveTab('planet')}
-                    size="sm"
+              <Tabs defaultValue="planet" className="w-full">
+                <TabsList className="w-full hud-element justify-center bg-transparent p-1 gap-1">
+                  <TabsTrigger 
+                    value="planet"
+                    className="nms-text data-[state=active]:bg-cosmic-teal/20 data-[state=active]:text-cosmic-teal"
                   >
-                    <Globe className="mr-1 h-4 w-4" />
-                    Planet View
-                  </Button>
-                  <Button 
-                    variant={activeTab === 'galaxy' ? 'default' : 'ghost'}
-                    className={activeTab === 'galaxy' ? 'bg-cosmic-purple text-white' : 'text-muted-foreground'}
-                    onClick={() => setActiveTab('galaxy')}
-                    size="sm"
+                    <Globe className="mr-2 h-4 w-4" />
+                    Planet Analysis
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="galaxy"
+                    className="nms-text data-[state=active]:bg-cosmic-teal/20 data-[state=active]:text-cosmic-teal"
                   >
-                    <Compass className="mr-1 h-4 w-4" />
+                    <Compass className="mr-2 h-4 w-4" />
                     Galaxy Map
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Content based on active tab */}
-              {activeTab === 'planet' && currentPlanet && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                  <div className="glass p-6 rounded-lg neon-border h-[400px] md:h-[500px] flex flex-col">
-                    <h2 className="text-xl font-semibold mb-4 text-center flex justify-center items-center gap-2">
-                      <Globe className="text-cosmic-teal h-5 w-5" />
-                      {currentPlanet.name}
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="planet" className="mt-6">
+                  {currentPlanet && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="planet-card">
+                        <div className="absolute top-4 left-4 z-10">
+                          <h2 className="nms-text text-lg text-cosmic-teal flex items-center gap-2">
+                            <Globe className="h-5 w-5" />
+                            {currentPlanet.name}
+                          </h2>
+                        </div>
+                        <div className="h-[400px] md:h-[500px] relative">
+                          <PlanetViewer planet={currentPlanet} />
+                          <div className="bg-scan-lines absolute inset-0 pointer-events-none"></div>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <PlanetInfo planet={currentPlanet} />
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="galaxy" className="mt-6">
+                  <div className="planet-card">
+                    <h2 className="nms-text text-lg text-cosmic-teal mb-4 flex items-center gap-2">
+                      <Rocket className="h-5 w-5" />
+                      Navigation System
                     </h2>
-                    <div className="flex-grow relative">
-                      <PlanetViewer planet={currentPlanet} />
+                    <div className="h-[600px] relative">
+                      <GalaxyMap 
+                        planets={planets}
+                        currentPlanetId={currentPlanet?.id || ''}
+                        onSelectPlanet={handleSelectPlanet}
+                      />
+                      <div className="bg-scan-lines absolute inset-0 pointer-events-none"></div>
                     </div>
                   </div>
-                  <div className="h-full">
-                    <PlanetInfo planet={currentPlanet} />
-                  </div>
-                </div>
-              )}
-              
-              {activeTab === 'galaxy' && (
-                <div className="glass p-6 rounded-lg neon-border">
-                  <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                    <Rocket className="text-cosmic-teal" size={20} />
-                    Galaxy Map
-                  </h2>
-                  <div className="h-[500px]">
-                    <GalaxyMap 
-                      planets={planets} 
-                      currentPlanetId={currentPlanet?.id || ''} 
-                      onSelectPlanet={handleSelectPlanet} 
-                    />
-                  </div>
-                </div>
-              )}
-              
-              {/* Controls */}
+                </TabsContent>
+              </Tabs>
+
               <div className="flex justify-center mt-6">
                 <Button 
                   onClick={handleGenerateNewPlanet}
-                  className="bg-cosmic-purple hover:bg-cosmic-purple/80 text-white neon-border"
-                  size="lg"
+                  className="nms-button"
                 >
-                  Discover New Planet
-                  <ArrowRight size={16} className="ml-2" />
+                  Initiate Planet Discovery
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             </>
           )}
         </div>
       </main>
-      
-      {/* Footer */}
-      <footer className="py-6 text-center text-sm text-muted-foreground relative z-10">
-        <p>Cosmos Voyager — Inspired by No Man's Sky</p>
+
+      <footer className="py-6 text-center nms-text text-sm text-cosmic-teal/60">
+        <p>ATLAS TERMINAL v1.0 // CONNECTION STABLE</p>
       </footer>
     </div>
   );

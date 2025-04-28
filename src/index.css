@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,98 +43,124 @@
 
   body {
     @apply bg-cosmic-black text-foreground;
-    background-image: radial-gradient(circle at 50% 50%, #0A192F 0%, #040B1A 100%);
+    background-image: 
+      linear-gradient(to bottom,
+        rgba(10, 25, 47, 0.9) 0%,
+        rgba(4, 11, 26, 0.95) 100%
+      ),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.3,36.7l26,15v30l-26,15l-26-15v-30L54.3,36.7z' fill='none' stroke='rgba(45, 212, 191, 0.1)' stroke-width='1'/%3E%3C/svg%3E");
   }
-
-  /* Glassmorphism styles */
-  .glass {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-lg;
-    box-shadow: 0 0 20px rgba(45, 212, 191, 0.1);
-  }
 }
 
-/* Star field background */
-.star {
-  @apply absolute rounded-full bg-white;
-  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.4);
+/* Enhanced glassmorphism for NMS style */
+.glass {
+  @apply bg-black/20 backdrop-blur-md border border-white/10;
+  box-shadow: 
+    0 0 20px rgba(45, 212, 191, 0.1),
+    inset 0 0 15px rgba(45, 212, 191, 0.05);
 }
 
-/* Glowing text effect */
-.glow-text {
-  text-shadow: 0 0 10px rgba(139, 92, 246, 0.7), 
-               0 0 20px rgba(139, 92, 246, 0.5);
+/* NMS-style HUD elements */
+.hud-element {
+  @apply relative border border-cosmic-teal/30 bg-black/40 backdrop-blur-sm;
+  box-shadow: 
+    0 0 15px rgba(45, 212, 191, 0.2),
+    inset 0 0 2px rgba(45, 212, 191, 0.3);
 }
 
-/* Neon border effect */
-.neon-border {
-  @apply relative;
-  box-shadow: 0 0 10px rgba(45, 212, 191, 0.3), 
-              0 0 20px rgba(45, 212, 191, 0.2);
-}
-
-.neon-border::after {
+.hud-element::before {
   content: '';
-  @apply absolute inset-0 rounded-lg;
-  box-shadow: 0 0 15px 2px theme('colors.cosmic.teal');
-  opacity: 0.3;
-  z-index: -1;
+  @apply absolute inset-0 bg-gradient-to-r from-cosmic-teal/5 to-transparent;
 }
 
-/* Planet rotating animation */
-.planet-rotate {
-  @apply animate-rotate-slow;
-}
-
-/* No Man's Sky style scan lines */
+/* Enhanced scan lines */
 .bg-scan-lines {
   background: repeating-linear-gradient(
-    0deg,
-    rgba(45, 212, 191, 0.1),
-    rgba(45, 212, 191, 0.1) 1px,
+    180deg,
+    rgba(45, 212, 191, 0.03) 0px,
+    rgba(45, 212, 191, 0.03) 1px,
     transparent 1px,
-    transparent 4px
+    transparent 2px
+  );
+  @apply before:absolute before:inset-0 before:bg-gradient-to-b before:from-transparent before:to-black/40;
+}
+
+/* NMS-style text effects */
+.nms-text {
+  @apply font-mono tracking-wider;
+  text-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
+}
+
+.nms-title {
+  @apply nms-text text-2xl font-bold text-cosmic-teal;
+  text-shadow: 
+    0 0 20px rgba(45, 212, 191, 0.4),
+    0 0 40px rgba(45, 212, 191, 0.2);
+}
+
+/* Interactive elements */
+.nms-button {
+  @apply relative overflow-hidden bg-cosmic-teal/10 border border-cosmic-teal/30 
+         text-cosmic-teal hover:bg-cosmic-teal/20 transition-all duration-300
+         flex items-center gap-2 px-4 py-2 rounded;
+  box-shadow: 0 0 15px rgba(45, 212, 191, 0.1);
+}
+
+.nms-button::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-cosmic-teal/10 to-transparent opacity-0 
+         transition-opacity duration-300;
+}
+
+.nms-button:hover::before {
+  @apply opacity-100;
+}
+
+/* Planet card effects */
+.planet-card {
+  @apply hud-element p-6 rounded-lg relative overflow-hidden;
+  clip-path: polygon(
+    0% 15px,
+    15px 0%,
+    calc(100% - 15px) 0%,
+    100% 15px,
+    100% calc(100% - 15px),
+    calc(100% - 15px) 100%,
+    15px 100%,
+    0% calc(100% - 15px)
   );
 }
 
-/* Hexagon pattern style */
-.hex-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.3,36.7l26,15v30l-26,15l-26-15v-30L54.3,36.7z' fill='none' stroke='rgba(45, 212, 191, 0.1)' stroke-width='1'/%3E%3C/svg%3E");
-  background-size: 60px 60px;
-}
-
-/* Interactive elements hover effects */
-.hover-glow {
-  transition: all 0.3s ease;
-}
-
-.hover-glow:hover {
-  box-shadow: 0 0 15px rgba(45, 212, 191, 0.5);
-}
-
-/* No Man's Sky style loading animation */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-}
-
-.pulse-ring::before {
+.planet-card::after {
   content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.5);
-  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  @apply absolute inset-0;
+  background: 
+    linear-gradient(45deg, transparent 48%, rgba(45, 212, 191, 0.1) 50%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(45, 212, 191, 0.1) 50%, transparent 52%);
+  background-size: 4px 4px;
 }
 
+/* Data display */
+.data-value {
+  @apply nms-text text-cosmic-teal font-mono text-sm;
+  text-shadow: 0 0 5px rgba(45, 212, 191, 0.5);
+}
+
+.data-label {
+  @apply text-xs text-cosmic-teal/60 uppercase tracking-wider;
+}
+
+/* Resource indicator */
+.resource-bar {
+  @apply h-1 bg-cosmic-teal/20 rounded overflow-hidden;
+}
+
+.resource-bar-fill {
+  @apply h-full bg-cosmic-teal;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}

@@ -200,9 +200,16 @@ export const generateRandomPlanet = (): Planet => {
   
   const type = getRandomItem(planetTypes);
   const colors = getPlanetColors(type);
+  
+  // Create mutable arrays from the readonly arrays to avoid type errors
   const prevalenceTypes = ['Abundant', 'Common', 'Infrequent', 'Sparse', 'None'] as const;
-  const faunaTypes = ['Flourishing', 'Ample', 'Irregular', 'Limited', 'None'] as const;
+  const prevalenceTypesArray = [...prevalenceTypes];
+  
   const temperaments = ['Docile', 'Skittish', 'Defensive', 'Aggressive', 'None'] as const;
+  const temperamentsArray = [...temperaments];
+  
+  const faunaTypes = ['Flourishing', 'Ample', 'Irregular', 'Limited', 'None'] as const;
+  const faunaTypesArray = [...faunaTypes];
   
   return {
     id: Math.random().toString(36).substring(2, 11),
@@ -214,12 +221,12 @@ export const generateRandomPlanet = (): Planet => {
     flora: {
       name: type === 'Barren' ? 'None' : generatePlanetName() + 'weed',
       description: type === 'Barren' ? 'None' : getRandomItem(floraDescriptions),
-      prevalence: type === 'Barren' ? 'None' : getRandomItem(prevalenceTypes)
+      prevalence: type === 'Barren' ? 'None' : getRandomItem(prevalenceTypesArray)
     },
     fauna: {
       name: type === 'Barren' ? 'None' : generatePlanetName() + 'oid',
-      temperament: type === 'Barren' ? 'None' : getRandomItem(temperaments),
-      prevalence: type === 'Barren' ? 'None' : getRandomItem(faunaTypes)
+      temperament: type === 'Barren' ? 'None' : getRandomItem(temperamentsArray),
+      prevalence: type === 'Barren' ? 'None' : getRandomItem(faunaTypesArray)
     },
     atmosphere: {
       type: type === 'Barren' ? 'Absent' : getRandomItem(atmosphereTypes),

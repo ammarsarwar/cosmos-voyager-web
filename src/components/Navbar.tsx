@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Navigation, Planet, Rocket, Star, Menu, X } from 'lucide-react';
+import { Navigation, Globe, Rocket, Star, Menu, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
@@ -14,7 +14,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass px-4 py-3">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Planet className="text-cosmic-teal" size={28} />
+          <Globe className="text-cosmic-teal" size={28} />
           <span className="text-xl font-bold tracking-wider glow-text text-white">
             COSMOS VOYAGER
           </span>
@@ -22,7 +22,7 @@ const Navbar = () => {
         
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-          <NavItem icon={<Planet size={18} />} label="Planets" />
+          <NavItem icon={<Globe size={18} />} label="Planets" />
           <NavItem icon={<Star size={18} />} label="Discoveries" />
           <NavItem icon={<Navigation size={18} />} label="Galaxy Map" />
           <NavItem icon={<Rocket size={18} />} label="Expeditions" />
@@ -43,7 +43,7 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden glass mt-2 rounded-lg mx-4">
           <div className="flex flex-col py-2">
-            <MobileNavItem icon={<Planet size={18} />} label="Planets" />
+            <MobileNavItem icon={<Globe size={18} />} label="Planets" />
             <MobileNavItem icon={<Star size={18} />} label="Discoveries" />
             <MobileNavItem icon={<Navigation size={18} />} label="Galaxy Map" />
             <MobileNavItem icon={<Rocket size={18} />} label="Expeditions" />

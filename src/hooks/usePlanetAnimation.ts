@@ -81,7 +81,8 @@ export const usePlanetAnimation = (planet: Planet) => {
       ctx.strokeStyle = `${planet.mainColor}70`;
       ctx.stroke();
       
-      setRotation(prev => prev + 0.001);
+      // Significantly slow down the rotation speed
+      setRotation(prev => prev + 0.0002);
       animationFrameId = requestAnimationFrame(drawPlanet);
     };
     

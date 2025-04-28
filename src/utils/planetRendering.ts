@@ -1,4 +1,6 @@
 
+import { Planet } from '@/utils/planetGenerator';
+
 interface PlanetRenderingProps {
   ctx: CanvasRenderingContext2D;
   centerX: number;

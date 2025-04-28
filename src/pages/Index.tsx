@@ -25,7 +25,6 @@ const Index = () => {
       setIsLoading(false);
     };
     
-    // Add small delay for loading effect
     const timer = setTimeout(generateGalaxy, 500);
     return () => clearTimeout(timer);
   }, []);
@@ -48,7 +47,7 @@ const Index = () => {
   };
   
   return (
-    <div className="min-h-screen overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Background effects */}
       <StarField starCount={150} />
       
@@ -56,11 +55,11 @@ const Index = () => {
       <Navbar />
       
       {/* Main content */}
-      <main className="container pt-20 px-4 pb-8 relative z-10">
+      <main className="container mx-auto px-4 py-20">
         <div className="flex flex-col gap-12">
           {/* Header with title */}
           <div className="text-center pt-4 pb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cosmic-teal via-cosmic-purple to-cosmic-pink glow-text">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cosmic-teal via-cosmic-purple to-cosmic-pink glow-text">
               COSMOS VOYAGER
             </h1>
             <p className="text-lg text-cosmic-teal/80 max-w-2xl mx-auto">
@@ -69,16 +68,19 @@ const Index = () => {
           </div>
           
           {isLoading ? (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center min-h-[400px]">
               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cosmic-purple"></div>
             </div>
           ) : (
             <>
               {/* Planet viewer section */}
               {currentPlanet && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-8">
-                  <div className="flex flex-col items-center">
-                    <PlanetViewer planet={currentPlanet} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                  <div className="flex flex-col items-center glass p-8 rounded-lg">
+                    <h2 className="text-xl font-semibold mb-4 text-center">{currentPlanet.name}</h2>
+                    <div className="w-full aspect-square max-w-md">
+                      <PlanetViewer planet={currentPlanet} />
+                    </div>
                   </div>
                   <div>
                     <PlanetInfo planet={currentPlanet} />
@@ -87,7 +89,7 @@ const Index = () => {
               )}
               
               {/* Galaxy map section */}
-              <div className="glass py-6 px-4 rounded-lg">
+              <div className="glass p-6 rounded-lg">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                   <Rocket className="text-cosmic-teal" size={20} />
                   Galaxy Map

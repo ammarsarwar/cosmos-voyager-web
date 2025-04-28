@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Planet } from '../utils/planetGenerator';
 
 interface PlanetViewerProps {
@@ -8,6 +8,7 @@ interface PlanetViewerProps {
 
 const PlanetViewer = ({ planet }: PlanetViewerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [rotation, setRotation] = useState(0);
   
   // Function to create a gradient style based on planet type
   const getPlanetGradient = (ctx: CanvasRenderingContext2D, width: number, height: number, planet: Planet) => {
@@ -18,8 +19,21 @@ const PlanetViewer = ({ planet }: PlanetViewerProps) => {
   };
   
   // Draw planet features based on type
-  const drawPlanetFeatures = (ctx: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, planet: Planet) => {
+  const drawPlanetFeatures = (
+    ctx: CanvasRenderingContext2D, 
+    centerX: number, 
+    centerY: number, 
+    radius: number, 
+    planet: Planet,
+    rotationOffset: number
+  ) => {
     const featureCount = Math.floor(Math.random() * 5) + 3;
+    
+    // Apply rotation to context for feature positioning
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(rotationOffset);
+    ctx.translate(-centerX, -centerY);
     
     // Draw features based on planet type
     switch (planet.type) {
@@ -173,6 +187,8 @@ const PlanetViewer = ({ planet }: PlanetViewerProps) => {
           ctx.stroke();
         }
     }
+    
+    ctx.restore();
   };
   
   // Draw atmosphere glow
@@ -197,7 +213,7 @@ const PlanetViewer = ({ planet }: PlanetViewerProps) => {
   // Draw rings for some planets
   const drawRings = (ctx: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number, planet: Planet) => {
     // Only some planets have rings (exotic and randomly some others)
-    if (planet.type === 'Exotic' || Math.random() < 0.3) {
+    if (planet.type === 'Exotic' || planet.id.charCodeAt(0) % 3 === 0) {
       ctx.beginPath();
       ctx.ellipse(
         centerX, centerY,
@@ -219,16 +235,40 @@ const PlanetViewer = ({ planet }: PlanetViewerProps) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
+    // Animation frame ID for cleanup
+    let animationFrameId: number;
+    
+    // For consistent planet features
+    const seed = planet.id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    
     const drawPlanet = () => {
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
+      
+      // Use 70% of the smaller dimension for planet radius
       const radius = Math.min(canvas.width, canvas.height) * 0.35;
       
+      // Draw space background with stars
+      ctx.fillStyle = 'rgba(4, 11, 26, 0.3)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw some stars in the background
+      for (let i = 0; i < 30; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 1 + 0.5;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.7 + 0.3})`;
+        ctx.fill();
+      }
+      
       // Draw rings for some planets (behind the planet)
-      if (planet.type === 'Exotic' || Math.random() < 0.3) {
+      if (planet.type === 'Exotic' || planet.id.charCodeAt(0) % 3 === 0) {
         drawRings(ctx, centerX, centerY, radius, planet);
       }
       
@@ -241,29 +281,45 @@ const PlanetViewer = ({ planet }: PlanetViewerProps) => {
       ctx.fillStyle = getPlanetGradient(ctx, 0, canvas.height, planet);
       ctx.fill();
       
-      // Draw planet features
-      drawPlanetFeatures(ctx, centerX, centerY, radius, planet);
+      // Draw planet features with current rotation
+      drawPlanetFeatures(ctx, centerX, centerY, radius, planet, rotation);
       
-      // Draw planet shadow
+      // Draw planet shadow/highlight for 3D effect
       const shadowGradient = ctx.createRadialGradient(
         centerX - radius * 0.5, centerY - radius * 0.5, 0,
-        centerX, centerY, radius
+        centerX, centerY, radius * 1.2
       );
       
-      shadowGradient.addColorStop(0, 'transparent');
+      shadowGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+      shadowGradient.addColorStop(0.5, 'transparent');
       shadowGradient.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
       
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.fillStyle = shadowGradient;
       ctx.fill();
+      
+      // Add slight highlight on edge for atmospheric effect
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = `${planet.mainColor}70`;
+      ctx.stroke();
+      
+      // Update rotation for animation
+      setRotation((prev) => prev + 0.001);
+      
+      // Continue animation
+      animationFrameId = requestAnimationFrame(drawPlanet);
     };
     
     // Resize handler
     const handleResize = () => {
-      canvas.width = canvas.clientWidth * 2; // For higher resolution
-      canvas.height = canvas.clientHeight * 2;
-      ctx.scale(2, 2);
+      const containerRect = canvas.parentElement?.getBoundingClientRect();
+      if (!containerRect) return;
+      
+      canvas.width = containerRect.width;
+      canvas.height = containerRect.height;
       drawPlanet();
     };
     
@@ -272,15 +328,24 @@ const PlanetViewer = ({ planet }: PlanetViewerProps) => {
     
     return () => {
       window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, [planet]);
+  }, [planet, rotation]);
   
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
       <canvas 
         ref={canvasRef} 
-        className="w-full h-full max-h-[400px] animate-float"
+        className="w-full h-full rounded-lg"
       />
+      
+      {/* No Man's Sky style scan lines overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-20 bg-scan-lines" />
+      
+      {/* Planet name overlay in NMS style */}
+      <div className="absolute bottom-4 left-4 text-sm font-mono">
+        <span className="text-cosmic-teal">[{planet.type}]</span>
+      </div>
     </div>
   );
 };

@@ -50,6 +50,7 @@
   /* Glassmorphism styles */
   .glass {
     @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-lg;
+    box-shadow: 0 0 20px rgba(45, 212, 191, 0.1);
   }
 }
 
@@ -68,12 +69,15 @@
 /* Neon border effect */
 .neon-border {
   @apply relative;
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.3), 
+              0 0 20px rgba(45, 212, 191, 0.2);
 }
 
 .neon-border::after {
   content: '';
   @apply absolute inset-0 rounded-lg;
-  box-shadow: 0 0 15px 2px theme('colors.cosmic.purple');
+  box-shadow: 0 0 15px 2px theme('colors.cosmic.teal');
+  opacity: 0.3;
   z-index: -1;
 }
 
@@ -81,3 +85,57 @@
 .planet-rotate {
   @apply animate-rotate-slow;
 }
+
+/* No Man's Sky style scan lines */
+.bg-scan-lines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(45, 212, 191, 0.1),
+    rgba(45, 212, 191, 0.1) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* Hexagon pattern style */
+.hex-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.3,36.7l26,15v30l-26,15l-26-15v-30L54.3,36.7z' fill='none' stroke='rgba(45, 212, 191, 0.1)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+}
+
+/* Interactive elements hover effects */
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 15px rgba(45, 212, 191, 0.5);
+}
+
+/* No Man's Sky style loading animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.5);
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+}
+
